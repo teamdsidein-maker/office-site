@@ -36,6 +36,22 @@ a { color: inherit; }
 }
 .inp:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(14, 53, 97, .14); }
 select.inp { cursor: pointer; }
+.cs-wrap { position: relative; display: block; width: 100%; min-width: 0; }
+.cs-native { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0; pointer-events: none; }
+.cs-trigger.inp { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; cursor: pointer; font-weight: 500; white-space: nowrap; }
+.cs-trigger:hover { border-color: #829aab; background: #fbfdfd; }
+.cs-trigger.cs-open, .cs-trigger:focus-visible { outline: none; border-color: var(--teal-ink); box-shadow: 0 0 0 3px rgba(2, 174, 172, .15); }
+.cs-trigger.cs-empty .cs-value { color: #71818e; }
+.cs-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs-value small { color: #667b89; font-size: .78em; font-weight: 400; margin-left: 5px; }
+.cs-chevron { flex: none; width: 9px; height: 9px; border-right: 2px solid #557081; border-bottom: 2px solid #557081; transform: rotate(45deg) translateY(-2px); transition: transform .16s; }
+.cs-open .cs-chevron { transform: rotate(225deg) translate(-2px, -1px); }
+.cs-menu:popover-open { position: fixed; inset: auto; margin: 0; padding: 5px; overflow-y: auto; overscroll-behavior: contain; background: #fff; border: 1px solid #cbd9df; border-radius: 12px; box-shadow: 0 16px 42px rgba(14, 53, 97, .2); color: var(--text); }
+.cs-option { display: flex; flex-direction: column; align-items: flex-start; width: 100%; padding: 9px 11px; border: 0; border-radius: 8px; background: transparent; color: #213b50; font: inherit; font-size: .9rem; text-align: left; line-height: 1.25; cursor: pointer; }
+.cs-option small { color: #6b7e8b; font-size: .78rem; margin-top: 2px; }
+.cs-option:hover, .cs-option:focus-visible { outline: none; background: #e9f5f4; }
+.cs-option[aria-selected="true"] { color: #0e3561; background: #edf4f8; font-weight: 700; }
+.cs-option:disabled { color: #8c9ba5; cursor: default; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   min-height: 40px; padding: 0 16px; white-space: nowrap; text-decoration: none;

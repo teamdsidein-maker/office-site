@@ -1,3 +1,4 @@
+import "./custom-select.js";
 import { supabaseUrl, supabaseAnonKey } from "./config.js";
 
 const endpoint = `${supabaseUrl}/functions/v1/online-intake`;

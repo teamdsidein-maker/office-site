@@ -1,3 +1,4 @@
+import "./custom-select.js";
 import { api, isDemo, LIMITS } from "./data.js";
 import { ROLE_LABELS, assignableRoles, checkTarget, validMobile, validPassword } from "./rules.js";
 import { canMove, noteNeeded } from "./workflow.js";
