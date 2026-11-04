@@ -128,7 +128,7 @@ function showLogin(message = "") {
         <label class="fl"><span>${t("ਮੋਬਾਈਲ ਨੰਬਰ", "Mobile number")}</span><input class="inp" id="mobile" inputmode="numeric" maxlength="10" autocomplete="username" required></label>
         <label class="fl"><span>${t("ਪਾਸਵਰਡ", "Password")}</span><input class="inp" id="password" type="password" autocomplete="current-password" required></label>
         <button class="btn primary wide" id="login-btn">${t("ਲੌਗਇਨ ਕਰੋ", "Log in")}</button>
-        <a class="btn wide" href="online.html">${t("ਆਪਣੀ ਸਮੱਸਿਆ ਦਰਜ ਕਰੋ", "Submit a problem online")}</a>
+        <a class="btn wide" href="apply/">${t("ਆਪਣੀ ਸਮੱਸਿਆ ਦਰਜ ਕਰੋ", "Submit a problem online")}</a>
         <p class="err" id="login-msg" role="alert">${esc(message)}</p>
         <p class="stack center small">${t("ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ? ਆਪਣੇ ਐਡਮਿਨ ਨੂੰ ਕਹੋ।", "Forgot your password? Ask your admin to reset it.")}</p>
         ${isDemo ? `<div class="demo-box">
@@ -665,7 +665,7 @@ function renderOnlineApplications() {
   const queue = scopedApps().filter((a) => a.intake_source === "online" && a.status === "new" && !a.deleted);
   $("#view").innerHTML = `${head(t("ਆਨਲਾਈਨ ਅਰਜ਼ੀਆਂ", "Online applications"),
     t("ਲੋਕਾਂ ਵੱਲੋਂ ਭੇਜੀਆਂ ਨਵੀਆਂ ਅਰਜ਼ੀਆਂ। ਹਰ ਅਰਜ਼ੀ ਦੇਖ ਕੇ ਵਿਭਾਗ ਅਤੇ ਅਧਿਕਾਰੀ ਨੂੰ ਸੌਂਪੋ।", "New requests sent by the public. Review each one, then assign its department and officer."),
-    `<button class="btn" data-act="refresh-online">${t("ਤਾਜ਼ਾ ਕਰੋ", "Refresh")}</button> <a class="btn" href="online.html" target="_blank" rel="noopener">${t("ਜਨਤਕ ਫਾਰਮ", "Public form")}</a>`)}
+    `<button class="btn" data-act="refresh-online">${t("ਤਾਜ਼ਾ ਕਰੋ", "Refresh")}</button> <a class="btn" href="apply/" target="_blank" rel="noopener">${t("ਜਨਤਕ ਫਾਰਮ", "Public form")}</a>`)}
     <p class="muted small">${queue.length} ${p("ਸੌਂਪਣ ਲਈ", "waiting for assignment")}</p>
     ${appList(queue)}`;
 }
