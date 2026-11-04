@@ -33,6 +33,7 @@ const NAV = {
   reports: ["ਰਿਪੋਰਟਾਂ", "Reports", "M4 20V10M10 20V4M16 20v-7M22 20H2"],
   lists: ["ਸੂਚੀਆਂ", "Lists", "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"],
   applications: ["ਅਰਜ਼ੀਆਂ", "Applications", "M6 2h9l5 5v15H6zM14 2v6h6M9 13h8M9 17h8"],
+  online: ["ਆਨਲਾਈਨ ਅਰਜ਼ੀਆਂ", "Online applications", "M4 4h16v12H4zM8 20h8M12 16v4M8 10h8"],
   constituencies: ["ਹਲਕੇ", "Constituencies", "M12 22s7-7.2 7-12a7 7 0 10-14 0c0 4.8 7 12 7 12zM12 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"],
   departments: ["ਵਿਭਾਗ", "Departments", "M4 21V5l8-3v19M12 9l8 3v9M2 21h20M8 8v.01M8 12v.01M8 16v.01M16 15v.01M16 18v.01"],
   people: ["ਲੋਕ", "People", "M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"],
@@ -40,9 +41,9 @@ const NAV = {
   account: ["ਮੇਰਾ ਖਾਤਾ", "My account", "M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 0116 0"]
 };
 const NAV_BY_ROLE = {
-  main_admin: ["home", "new", "applications", "reports", "offices", "constituencies", "departments", "people", "lists", "activity", "account"],
-  constituency_admin: ["home", "new", "applications", "reports", "offices", "departments", "people", "activity", "account"],
-  staff: ["home", "new", "applications", "departments", "account"],
+  main_admin: ["home", "new", "applications", "online", "reports", "offices", "constituencies", "departments", "people", "lists", "activity", "account"],
+  constituency_admin: ["home", "new", "applications", "online", "reports", "offices", "departments", "people", "activity", "account"],
+  staff: ["home", "new", "applications", "online", "departments", "account"],
   officer: ["home", "applications", "account"]
 };
 const OFFICE_KEYS = new Set(["offices", "constituencies", "departments", "people", "lists", "activity"]);
@@ -127,6 +128,7 @@ function showLogin(message = "") {
         <label class="fl"><span>${t("ਮੋਬਾਈਲ ਨੰਬਰ", "Mobile number")}</span><input class="inp" id="mobile" inputmode="numeric" maxlength="10" autocomplete="username" required></label>
         <label class="fl"><span>${t("ਪਾਸਵਰਡ", "Password")}</span><input class="inp" id="password" type="password" autocomplete="current-password" required></label>
         <button class="btn primary wide" id="login-btn">${t("ਲੌਗਇਨ ਕਰੋ", "Log in")}</button>
+        <a class="btn wide" href="online.html">${t("ਆਪਣੀ ਸਮੱਸਿਆ ਦਰਜ ਕਰੋ", "Submit a problem online")}</a>
         <p class="err" id="login-msg" role="alert">${esc(message)}</p>
         <p class="stack center small">${t("ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ? ਆਪਣੇ ਐਡਮਿਨ ਨੂੰ ਕਹੋ।", "Forgot your password? Ask your admin to reset it.")}</p>
         ${isDemo ? `<div class="demo-box">
@@ -246,7 +248,7 @@ function shell() {
   $("#view").addEventListener("submit", onSubmit);
 }
 
-const SCREENS = { home: renderHome, offices: renderOffices, new: () => renderAppForm(), applications: renderApplications, reports: renderReports, constituencies: renderConstituencies, departments: renderDepartments, people: renderPeople, lists: renderLists, activity: renderActivity, account: renderAccount };
+const SCREENS = { home: renderHome, offices: renderOffices, new: () => renderAppForm(), applications: renderApplications, online: renderOnlineApplications, reports: renderReports, constituencies: renderConstituencies, departments: renderDepartments, people: renderPeople, lists: renderLists, activity: renderActivity, account: renderAccount };
 
 const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 function playEnter() {
@@ -658,6 +660,14 @@ function renderApplications() {
     <div id="app-tiles">${statusTiles(base)}</div>
     <div id="app-results"></div>`;
   renderAppResults(base);
+}
+function renderOnlineApplications() {
+  const queue = scopedApps().filter((a) => a.intake_source === "online" && a.status === "new" && !a.deleted);
+  $("#view").innerHTML = `${head(t("ਆਨਲਾਈਨ ਅਰਜ਼ੀਆਂ", "Online applications"),
+    t("ਲੋਕਾਂ ਵੱਲੋਂ ਭੇਜੀਆਂ ਨਵੀਆਂ ਅਰਜ਼ੀਆਂ। ਹਰ ਅਰਜ਼ੀ ਦੇਖ ਕੇ ਵਿਭਾਗ ਅਤੇ ਅਧਿਕਾਰੀ ਨੂੰ ਸੌਂਪੋ।", "New requests sent by the public. Review each one, then assign its department and officer."),
+    `<button class="btn" data-act="refresh-online">${t("ਤਾਜ਼ਾ ਕਰੋ", "Refresh")}</button> <a class="btn" href="online.html" target="_blank" rel="noopener">${t("ਜਨਤਕ ਫਾਰਮ", "Public form")}</a>`)}
+    <p class="muted small">${queue.length} ${p("ਸੌਂਪਣ ਲਈ", "waiting for assignment")}</p>
+    ${appList(queue)}`;
 }
 const FILTER_LABEL = { working: ["ਕੰਮ ਜਾਰੀ", "In progress"], done: ["ਹੱਲ ਹੋਈਆਂ", "Solved"] };
 function renderAppResults(base) {
@@ -1500,6 +1510,7 @@ async function onClick(e) {
   const act = b.dataset.act, id = b.dataset.id;
   try {
     switch (act) {
+      case "refresh-online": await reload(); return route();
       case "new-again": renderAppForm(); return window.scrollTo({ top: 0 });
       case "go-apps": return goApps({ status: b.dataset.status || "", dept: b.dataset.dept || "", officer: b.dataset.officer || "", cid: b.dataset.cid });
       case "go-people":

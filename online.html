@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Submit a problem · dsidein Office</title>
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  .public-wrap{max-width:740px;margin:0 auto;padding:24px 16px 64px}
+  .public-head{display:flex;align-items:center;gap:14px;margin-bottom:24px;color:#0e3561}
+  .public-head img{width:52px;height:52px}
+  .public-head small,.public-head h1 small{display:block;color:#5e6875;font-size:.84rem;font-weight:500}
+  .public-card{background:white;border:1px solid #e1e6ec;border-radius:16px;padding:24px;box-shadow:0 4px 14px #1018280d}
+  .public-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .public-grid .wide{grid-column:1/-1}
+  .public-card textarea.inp{height:auto;min-height:160px;padding:12px;resize:vertical}
+  .public-card .check{display:flex;gap:10px;align-items:flex-start;margin:20px 0}
+  .public-card .check input{margin-top:5px}
+  .public-card .err{color:#b42318;min-height:1.4em}
+  .public-done{display:none}
+  @media(max-width:600px){.public-grid{grid-template-columns:1fr}.public-card{padding:18px}}
+</style>
+</head>
+<body>
+<main class="public-wrap">
+  <header class="public-head"><img src="assets/icons/icon-192.png" alt=""><div><h1>ਆਪਣੀ ਸਮੱਸਿਆ ਦਰਜ ਕਰੋ</h1><small>Submit your problem to the constituency office</small></div></header>
+  <section class="public-card" id="form-card">
+    <p>ਤੁਹਾਡੀ ਅਰਜ਼ੀ ਸਬੰਧਤ ਹਲਕੇ ਦੇ ਸਟਾਫ਼ ਕੋਲ ਜਾਵੇਗੀ। ਉਹ ਇਸ ਨੂੰ ਵਿਭਾਗ ਅਤੇ ਅਧਿਕਾਰੀ ਨੂੰ ਸੌਂਪਣਗੇ।<br><small>Your application goes to the selected constituency's staff for review and assignment.</small></p>
+    <form id="online-form" novalidate>
+      <div class="public-grid">
+        <label class="fl"><span>ਵਿਧਾਨ ਸਭਾ ਹਲਕਾ · Assembly constituency *</span><select class="inp" name="constituency_id" required><option value="">Loading...</option></select></label>
+        <label class="fl"><span>ਪੂਰਾ ਨਾਮ · Full name *</span><input class="inp" name="name" maxlength="120" autocomplete="name" required></label>
+        <label class="fl"><span>ਮੋਬਾਈਲ ਨੰਬਰ · Mobile number *</span><input class="inp" name="mobile" inputmode="numeric" maxlength="10" autocomplete="tel" required></label>
+        <label class="fl"><span>ਪਿੰਡ / ਵਾਰਡ · Village / Ward</span><input class="inp" name="village" maxlength="120"></label>
+        <label class="fl wide"><span>ਸਮੱਸਿਆ ਦੀ ਕਿਸਮ · Type of problem</span><input class="inp" name="category" maxlength="80" placeholder="e.g. Water, road, pension"></label>
+        <label class="fl wide"><span>ਸਮੱਸਿਆ ਦਾ ਵੇਰਵਾ · Problem details *</span><textarea class="inp" name="details" maxlength="3000" required></textarea></label>
+      </div>
+      <label class="check"><input type="checkbox" name="consent" required><span>ਮੈਂ ਸਹਿਮਤ ਹਾਂ ਕਿ ਦਫ਼ਤਰ ਮੇਰੀ ਦਿੱਤੀ ਜਾਣਕਾਰੀ ਨੂੰ ਇਸ ਸਮੱਸਿਆ 'ਤੇ ਕੰਮ ਕਰਨ ਅਤੇ ਮੈਨੂੰ ਸੰਪਰਕ ਕਰਨ ਲਈ ਵਰਤੇ।<br><small>I agree that the office may use these details to handle my request and contact me about it.</small></span></label>
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <p class="err" id="form-error" role="alert"></p>
+      <button class="btn primary wide" id="submit-button">ਅਰਜ਼ੀ ਭੇਜੋ · Submit application</button>
+    </form>
+  </section>
+  <section class="public-card public-done" id="done-card" role="status"><h2>ਅਰਜ਼ੀ ਮਿਲ ਗਈ · Application received</h2><p>ਆਪਣਾ ਨੰਬਰ ਸੰਭਾਲ ਕੇ ਰੱਖੋ · Keep your reference number:</p><strong id="reference"></strong><p>ਦਫ਼ਤਰ ਦਾ ਸਟਾਫ਼ ਇਸ ਨੂੰ ਦੇਖੇਗਾ · Office staff will review it.</p></section>
+</main>
+<script type="module" src="assets/online.js"></script>
+</body>
+</html>
