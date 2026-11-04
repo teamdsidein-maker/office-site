@@ -47,6 +47,9 @@ const NAV_BY_ROLE = {
   staff: ["home", "new", "applications", "online", "departments", "account"],
   officer: ["home", "applications", "account"]
 };
+const mobileMain = (role) => role === "officer" ? ["home", "applications", "account"]
+  : role === "staff" ? ["home", "applications", "online", "departments"]
+    : ["home", "applications", "online", "offices"];
 const OFFICE_KEYS = new Set(["offices", "constituencies", "departments", "people", "lists", "activity"]);
 const icon = (key) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${NAV[key][2]}"/></svg>`;
 
@@ -126,8 +129,8 @@ function showLogin(message = "") {
         <img src="assets/icons/icon-192.png" alt="" class="login-logo">
         <h1>${t("ਦਫ਼ਤਰ ਪ੍ਰਬੰਧ", "dsidein Office")}</h1>
         <p class="stack">${t("ਆਪਣੇ ਐਡਮਿਨ ਵੱਲੋਂ ਦਰਜ ਮੋਬਾਈਲ ਨੰਬਰ ਨਾਲ ਲੌਗਇਨ ਕਰੋ।", "Log in with the mobile number your admin registered.")}</p>
-        <label class="fl"><span>${t("ਮੋਬਾਈਲ ਨੰਬਰ", "Mobile number")}</span><input class="inp" id="mobile" inputmode="numeric" maxlength="10" autocomplete="username" required></label>
-        <label class="fl"><span>${t("ਪਾਸਵਰਡ", "Password")}</span><input class="inp" id="password" type="password" autocomplete="current-password" required></label>
+        <label class="fl"><span>${t("ਮੋਬਾਈਲ ਨੰਬਰ", "Mobile number")}</span><input class="inp" id="mobile" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" autocomplete="username" placeholder="10-digit mobile number" required></label>
+        <label class="fl"><span>${t("ਪਾਸਵਰਡ", "Password")}</span><span class="password-field"><input class="inp" id="password" type="password" autocomplete="current-password" required><button type="button" class="password-toggle" id="password-toggle" aria-label="${p("ਪਾਸਵਰਡ ਦਿਖਾਓ", "Show password")}" aria-pressed="false">${p("ਦਿਖਾਓ", "Show")}</button></span></label>
         <button class="btn primary wide" id="login-btn">${t("ਲੌਗਇਨ ਕਰੋ", "Log in")}</button>
         <a class="btn wide" href="apply/">${t("ਆਪਣੀ ਸਮੱਸਿਆ ਦਰਜ ਕਰੋ", "Submit a problem online")}</a>
         <p class="err" id="login-msg" role="alert">${esc(message)}</p>
@@ -139,6 +142,13 @@ function showLogin(message = "") {
       </form>
     </main>`;
   const msg = $("#login-msg");
+  $("#password-toggle").addEventListener("click", () => {
+    const input = $("#password"), toggle = $("#password-toggle"), showing = input.type === "password";
+    input.type = showing ? "text" : "password";
+    toggle.textContent = showing ? p("ਲੁਕਾਓ", "Hide") : p("ਦਿਖਾਓ", "Show");
+    toggle.setAttribute("aria-label", showing ? p("ਪਾਸਵਰਡ ਲੁਕਾਓ", "Hide password") : p("ਪਾਸਵਰਡ ਦਿਖਾਓ", "Show password"));
+    toggle.setAttribute("aria-pressed", String(showing));
+  });
   const go = async (mobile, password) => {
     msg.textContent = "";
     const btn = $("#login-btn");
@@ -149,8 +159,8 @@ function showLogin(message = "") {
   $("#login-form").addEventListener("submit", (e) => {
     e.preventDefault();
     const mobile = $("#mobile").value.trim(), password = $("#password").value;
-    if (!validMobile(mobile)) { msg.textContent = p("ਆਪਣਾ 10 ਅੰਕਾਂ ਦਾ ਮੋਬਾਈਲ ਨੰਬਰ ਲਿਖੋ", "Enter your 10-digit mobile number"); return; }
-    if (!password) { msg.textContent = p("ਪਾਸਵਰਡ ਲਿਖੋ", "Enter your password"); return; }
+    if (!validMobile(mobile)) { msg.textContent = p("ਆਪਣਾ 10 ਅੰਕਾਂ ਦਾ ਮੋਬਾਈਲ ਨੰਬਰ ਲਿਖੋ", "Enter your 10-digit mobile number"); $("#mobile").focus(); return; }
+    if (!password) { msg.textContent = p("ਪਾਸਵਰਡ ਲਿਖੋ", "Enter your password"); $("#password").focus(); return; }
     go(mobile, password);
   });
   root.querySelectorAll("[data-demo]").forEach((b) => b.addEventListener("click", () => go(b.dataset.demo, "demo")));
@@ -198,6 +208,7 @@ async function signOut() {
 // ---------- shell ----------
 function shell() {
   const me = state.me, items = NAV_BY_ROLE[me.role];
+  const mobileItems = mobileMain(me.role);
   const label = (k) => (k === "applications" && me.role === "officer" ? ["ਮੇਰਾ ਕੰਮ", "My work"] : NAV[k]);
   const link = (k) => `<a href="#/${k}" data-nav="${k}">${icon(k)}<span class="nav-label"><span class="pa">${label(k)[0]}</span><small class="en">${label(k)[1]}</small></span>${k === "applications" ? `<b class="nb" hidden></b>` : ""}</a>`;
   const scope = me.role === "main_admin" ? p("ਸਾਰੇ ਹਲਕੇ", "All constituencies") : plainName(conById(me.constituency_id));
@@ -214,7 +225,7 @@ function shell() {
       <div class="main">
         <header class="mobile-top">
           <img src="assets/icons/icon-192.png" alt=""><div><strong>${esc(me.full_name)}</strong><small>${esc(roleText(me.role))}</small></div>
-          <button class="btn sm" id="logout-m">${p("ਲੌਗਆਊਟ", "Log out")}</button>
+          <button type="button" class="mobile-menu-open" data-open-menu aria-label="${p("ਮੀਨੂ ਖੋਲ੍ਹੋ", "Open menu")}" aria-controls="mobile-menu" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
         </header>
         ${me.role === "officer" ? "" : `<div class="section-bar">
           <div class="section-tabs">
@@ -228,10 +239,20 @@ function shell() {
         ${isDemo ? `<div class="demo-bar">${p("ਡੈਮੋ: ਡਾਟਾ ਸਿਰਫ਼ ਇਸ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਹੈ, ਅਰਜ਼ੀਆਂ ਨਮੂਨੇ ਦੀਆਂ ਹਨ", "Demo: data stays in this browser, applications are samples")}</div>` : ""}
         <div class="view" id="view"></div>
       </div>
-      <nav class="bottom-nav">${items.map(link).join("")}</nav>
+      <nav class="bottom-nav" aria-label="${p("ਮੁੱਖ ਨੇਵੀਗੇਸ਼ਨ", "Main navigation")}">${mobileItems.map(link).join("")}${items.length > mobileItems.length ? `<button type="button" class="mobile-more" data-open-menu aria-label="${p("ਹੋਰ ਪੰਨੇ", "More pages")}" aria-controls="mobile-menu" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg><span>${t("ਹੋਰ", "More")}</span></button>` : ""}</nav>
+      <dialog id="mobile-menu" class="mobile-menu" aria-label="${p("ਦਫ਼ਤਰ ਮੀਨੂ", "Office menu")}">
+        <div class="mobile-menu-head"><strong>${t("ਦਫ਼ਤਰ ਮੀਨੂ", "Office menu")}</strong><button type="button" class="icon-btn" data-close-menu aria-label="${p("ਮੀਨੂ ਬੰਦ ਕਰੋ", "Close menu")}">✕</button></div>
+        <nav class="mobile-menu-links" aria-label="${p("ਸਾਰੇ ਪੰਨੇ", "All pages")}">${items.map(link).join("")}</nav>
+        <button type="button" class="btn mobile-menu-logout" data-menu-logout>${p("ਲੌਗਆਊਟ", "Log out")}</button>
+      </dialog>
     </div>`;
   $("#logout").addEventListener("click", signOut);
-  $("#logout-m").addEventListener("click", signOut);
+  const mobileMenu = $("#mobile-menu");
+  root.querySelectorAll("[data-open-menu]").forEach((button) => button.addEventListener("click", () => mobileMenu.showModal()));
+  mobileMenu.addEventListener("click", (e) => {
+    if (e.target === mobileMenu || e.target.closest("[data-close-menu], [data-nav]")) mobileMenu.close();
+    if (e.target.closest("[data-menu-logout]")) { mobileMenu.close(); signOut(); }
+  });
   // A menu or section click starts with clean filters.
   root.addEventListener("click", (e) => {
     if (e.target.closest("[data-nav], [data-sec]")) { state.af = blankAppFilter(); state.picked.clear(); }
@@ -289,11 +310,11 @@ function route() {
   root.querySelectorAll("[data-nav]").forEach((a) => a.classList.toggle("active", a.dataset.nav === key));
   if (key !== "account") state.section = OFFICE_KEYS.has(key) ? "offices" : "applications";
   root.querySelectorAll("[data-sec]").forEach((a) => a.classList.toggle("on", a.dataset.sec === state.section));
-  if (state.me.role !== "officer") root.querySelectorAll("[data-nav]").forEach((a) => {
+  if (state.me.role !== "officer") root.querySelectorAll(".side-nav [data-nav]").forEach((a) => {
     const k = a.dataset.nav;
     a.hidden = !(k === "account" || (state.section === "offices") === OFFICE_KEYS.has(k));
   });
-  root.querySelector(".bottom-nav a.active")?.scrollIntoView({ inline: "center", block: "nearest" });
+  root.querySelectorAll(".bottom-nav [data-open-menu]").forEach((button) => button.classList.toggle("active", !mobileMain(state.me.role).includes(key)));
   const pageChanged = state.pageKey !== location.hash;
   state.pageKey = location.hash;
   if (pageChanged) { state.picked.clear(); playEnter(); }
