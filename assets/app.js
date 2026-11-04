@@ -592,6 +592,7 @@ function appList(list, { pick = false } = {}) {
         <small>${esc(a.village || "")}${isMain() ? ` · ${esc(plainName(conById(a.constituency_id)))}` : ""}</small>
         <p class="app-text">${esc(plainText(a.details))}</p>
         <div class="chips tight">
+          ${a.intake_source === "online" ? `<span class="chip online-source">${p("ਆਨਲਾਈਨ", "Online")}</span>` : ""}
           ${d ? `<span class="chip">${esc(plainName(d))}</span>` : `<span class="chip warn">${p("ਵਿਭਾਗ ਨਹੀਂ ਸੌਂਪਿਆ", "No department yet")}</span>`}
           ${ppl.map((x) => `<span class="chip plain">${esc(x.full_name)}</span>`).join("")}
           ${isRevisitDue(a) ? `<span class="chip warn">${p("ਦੁਬਾਰਾ ਮਿਲਣਾ", "Re-visit due")}</span>` : ""}
@@ -887,7 +888,7 @@ async function renderApplicationDetail(id) {
   $("#view").innerHTML = `
     <a class="back" href="${backHref}">← ${d && canSend() ? t(esc(d.name_pa || d.name), esc(d.name)) : t("ਅਰਜ਼ੀਆਂ", "Applications")}</a>
     <div class="page-head"><div><span class="app-no">${appNo(a)}</span><h1>${esc(a.name)}</h1>
-      <p class="muted small">${esc(fmtDate(a.created_at))}${creator ? ` · ${p("ਦਰਜ ਕੀਤੀ", "Registered by")}: ${esc(creator.full_name)}` : ""}</p></div>${statusBadge(a.status)}</div>
+      <p class="muted small">${esc(fmtDate(a.created_at))}${a.intake_source === "online" ? ` · ${p("ਆਨਲਾਈਨ ਅਰਜ਼ੀ", "Online application")}` : ""}${creator ? ` · ${p("ਦਰਜ ਕੀਤੀ", "Registered by")}: ${esc(creator.full_name)}` : ""}</p></div>${statusBadge(a.status)}</div>
     <ol class="stepper${a.status === "returned" ? " back-state" : ""}">
       ${STEPS.map((s, i) => `<li class="${i < stepAt ? "done" : i === stepAt ? "now" : ""}"><i>${i < stepAt ? "✓" : i + 1}</i><span class="stack">${t(...STATUS[s])}</span></li>`).join("")}
     </ol>
