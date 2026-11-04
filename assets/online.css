@@ -1,25 +1,15 @@
 .intake-page{min-height:100vh;background:#f3f6f6;color:#183148}
 .intake-top{background:#0e3561;color:#fff}
-.intake-top-inner{max-width:1120px;margin:auto;min-height:76px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.intake-top-inner{max-width:720px;margin:auto;min-height:68px;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .intake-brand{display:flex;align-items:center;gap:12px}
 .intake-brand img{width:42px;height:42px;object-fit:contain;border-radius:11px;background:white;padding:4px}
 .intake-brand strong,.intake-brand small{display:block;line-height:1.3}
 .intake-brand strong{font-size:1rem}.intake-brand small{font-size:.78rem;color:#bdd4e8}
 .intake-top-label{color:#d1e1ee;font-size:.83rem}
-.intake-layout{max-width:1120px;margin:0 auto;padding:56px 24px 72px;display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:64px;align-items:start}
-.intake-intro{padding-top:28px;position:sticky;top:32px}
-.intake-eyebrow,.intake-card-kicker{display:inline-block;color:#087c7a;font-size:.77rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.intake-intro h1{font-size:clamp(2.55rem,5vw,4.15rem);line-height:1.18;letter-spacing:-.035em;margin:18px 0 12px;color:#0e3561}
-.intake-dot{color:#00a8a4}
-.intake-intro-en{font-size:1.12rem;color:#335168;margin:0 0 28px}
-.intake-intro-detail{font-size:1rem;line-height:1.8;color:#526476;max-width:420px;margin:0 0 38px}
-.intake-steps{border-top:1px solid #cbd9df;max-width:390px}
-.intake-steps>div{display:flex;gap:18px;align-items:center;padding:16px 0;border-bottom:1px solid #cbd9df}
-.intake-steps b{font-size:.8rem;color:#087c7a;font-weight:800}
-.intake-steps span{font-weight:700}.intake-steps small{display:block;color:#687c8c;font-weight:400;font-size:.8rem}
+.intake-layout{max-width:720px;margin:0 auto;padding:28px 24px 48px}
 .intake-card{background:white;border:1px solid #dde7ea;border-radius:22px;padding:34px;box-shadow:0 20px 50px rgba(14,53,97,.08)}
-.intake-card-head{padding-bottom:25px;border-bottom:1px solid #e5ecef}
-.intake-card-head h2{font-size:1.55rem;color:#163b5c;margin:8px 0 4px}
+.intake-card-head{padding-bottom:20px;border-bottom:1px solid #e5ecef}
+.intake-card-head h1{font-size:1.6rem;color:#163b5c;margin:0 0 4px}
 .intake-card-head p{margin:0;color:#6b7c89;font-size:.84rem}
 .intake-section-title{display:flex;align-items:center;gap:12px;margin:26px 0 18px;color:#173e5b}
 .intake-section-title>span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#e2f4f2;color:#087c7a;font-size:.8rem;font-weight:800}
@@ -43,5 +33,4 @@
 .intake-done{text-align:center;align-self:center}.intake-done h2{color:#0e3561;font-size:1.8rem}.intake-done p{color:#566b7a}
 .intake-success-icon{display:grid;place-items:center;width:60px;height:60px;margin:0 auto 20px;border-radius:50%;background:#e2f4f2;color:#087c7a;font-size:2rem}
 .intake-reference{background:#f1f7f8;border:1px solid #d3e6e8;padding:20px;border-radius:12px;margin:28px 0}.intake-reference small,.intake-reference strong{display:block}.intake-reference small{color:#617887}.intake-reference strong{font-size:1.35rem;color:#0e3561;margin-top:8px}
-@media(max-width:850px){.intake-layout{grid-template-columns:1fr;gap:30px;max-width:680px;padding-top:34px}.intake-intro{position:static;padding:0}.intake-intro h1{font-size:2.9rem;margin:12px 0 5px}.intake-intro-detail{margin-bottom:0;max-width:none}.intake-steps{display:none}}
-@media(max-width:600px){.intake-top-inner{min-height:64px;padding:10px 16px}.intake-top-label{display:none}.intake-layout{padding:28px 14px 46px;gap:22px}.intake-intro h1{font-size:2.4rem}.intake-intro-en{font-size:1rem;margin-bottom:10px}.intake-intro-detail{font-size:.9rem;line-height:1.6}.intake-card{padding:22px 18px;border-radius:16px}.intake-grid{grid-template-columns:1fr;gap:15px}.intake-card-head{padding-bottom:18px}.intake-section-title{margin:22px 0 15px}.intake-submit>span{font-size:.75rem}}
+@media(max-width:600px){.intake-top-inner{min-height:60px;padding:9px 16px}.intake-top-label{display:none}.intake-layout{padding:16px 12px 36px}.intake-card{padding:22px 18px;border-radius:16px}.intake-card-head h1{font-size:1.35rem}.intake-grid{grid-template-columns:1fr;gap:15px}.intake-card-head{padding-bottom:16px}.intake-section-title{margin:22px 0 15px}.intake-submit>span{font-size:.75rem}}
