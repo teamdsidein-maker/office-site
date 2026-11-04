@@ -1359,12 +1359,16 @@ function personDialog(person) {
     e.preventDefault();
     const msg = $("#person-msg"), btn = $("#person-save");
     msg.textContent = "";
+    const selectedRole = f.elements.namedItem("role").value;
+    const selectedCid = isMain() ? f.elements.namedItem("constituency_id").value : state.me.constituency_id;
     const body = {
       full_name: f.full_name.value.trim(),
       mobile: f.mobile.value.trim(),
-      role: form.role,
-      constituency_id: form.cid,
-      department_ids: form.role === "officer" ? [...form.depts] : []
+      role: selectedRole,
+      constituency_id: selectedCid,
+      department_ids: selectedRole === "officer"
+        ? [...f.querySelectorAll("#dept-box input[type=checkbox]:checked")].map((input) => input.value)
+        : []
     };
     let password;
     if (person) body.user_id = person.id;
