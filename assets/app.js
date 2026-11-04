@@ -1225,6 +1225,12 @@ function renderLists() {
         <button class="btn sm" data-act="edit-item" data-id="${esc(i.id)}">${p("ਬਦਲੋ", "Edit")}</button>
         <button class="btn sm" data-act="toggle-item" data-id="${esc(i.id)}">${i.active ? p("ਬੰਦ ਕਰੋ", "Switch off") : p("ਚਾਲੂ ਕਰੋ", "Switch on")}</button>
       </div></div>`).join("") || `<div class="row muted">${p("ਅਜੇ ਕੁਝ ਨਹੀਂ", "Nothing yet")}</div>`}</div>
+    <form class="panel narrow setting" data-form="intake-office" novalidate>
+      <h2>${t("ਆਨਲਾਈਨ ਅਰਜ਼ੀਆਂ ਦਾ ਦਫ਼ਤਰ", "Office for online applications")}</h2>
+      <p class="muted small">${t("ਜਨਤਕ ਫਾਰਮ ਦੀਆਂ ਅਰਜ਼ੀਆਂ ਇਸ ਹਲਕੇ ਦੇ ਸਟਾਫ਼ ਕੋਲ ਜਾਣਗੀਆਂ।", "Public applications go to this constituency's staff.")}</p>
+      <label class="fl"><span>${t("ਹਲਕਾ ਚੁਣੋ", "Choose constituency")}</span><select class="inp" name="constituency_id">${opt("", p("ਚੁਣੋ", "Choose"), state.settings.public_intake_constituency_id || "")}${state.constituencies.filter((c) => c.active).map((c) => opt(c.id, plainName(c), state.settings.public_intake_constituency_id)).join("")}</select></label>
+      <button class="btn primary">${t("ਸੇਵ ਕਰੋ", "Save")}</button>
+    </form>
     <form class="panel narrow setting" data-form="portal" novalidate>
       <h2>${t("ਪੋਲਿੰਗ ਸਟੇਸ਼ਨ ਪੋਰਟਲ ਦਾ ਲਿੰਕ", "Polling station portal link")}</h2>
       <input class="inp" name="url" type="url" value="${esc(state.settings.polling_portal_url)}" placeholder="https://">
@@ -1643,6 +1649,12 @@ async function onSubmit(e) {
       const name = f.name.value.trim();
       if (!name) return toast(ENTER, "err");
       await run(btn, () => api.addListItem({ kind: state.listKind, name, name_pa: f.name_pa.value.trim() || null, ...(f.days?.value ? { days: Number(f.days.value) } : {}), sort_order: 99 }));
+      await reload();
+      toast(SAVED, "ok");
+    } else if (kind === "intake-office") {
+      const cid = f.elements.namedItem("constituency_id").value;
+      if (!state.constituencies.some((c) => c.id === cid && c.active)) return toast(p("ਚਾਲੂ ਹਲਕਾ ਚੁਣੋ", "Choose an active constituency"), "err");
+      await run(btn, () => api.saveSetting("public_intake_constituency_id", cid));
       await reload();
       toast(SAVED, "ok");
     } else if (kind === "portal") {

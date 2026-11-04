@@ -17,10 +17,10 @@
     <form id="online-form" novalidate>
       <div class="intake-section-title"><span>1</span><strong>ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ <small>Your details</small></strong></div>
       <div class="intake-grid">
-        <label class="fl wide"><span>ਵਿਧਾਨ ਸਭਾ ਹਲਕਾ · Assembly constituency *</span><select class="inp" name="constituency_id" required><option value="">ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ · Loading...</option></select></label>
         <label class="fl"><span>ਪੂਰਾ ਨਾਮ · Full name *</span><input class="inp" name="name" maxlength="120" autocomplete="name" placeholder="ਆਪਣਾ ਨਾਮ ਲਿਖੋ" required></label>
+        <label class="fl"><span>ਵੋਟਰ ਕਾਰਡ / EPIC ਨੰਬਰ · Voter ID card number</span><input class="inp" name="voter_id" maxlength="20" autocomplete="off" placeholder="ਜੇ ਹੋਵੇ · If available"></label>
         <label class="fl"><span>ਮੋਬਾਈਲ ਨੰਬਰ · Mobile number *</span><input class="inp" name="mobile" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" autocomplete="tel" placeholder="10 ਅੰਕਾਂ ਦਾ ਨੰਬਰ" required></label>
-        <label class="fl wide"><span>ਪਿੰਡ / ਵਾਰਡ · Village / Ward</span><input class="inp" name="village" maxlength="120" placeholder="ਆਪਣਾ ਪਿੰਡ ਜਾਂ ਵਾਰਡ ਲਿਖੋ"></label>
+        <label class="fl"><span>ਪਿੰਡ / ਵਾਰਡ · Village / Ward</span><input class="inp" name="village" maxlength="120" placeholder="ਆਪਣਾ ਪਿੰਡ ਜਾਂ ਵਾਰਡ ਲਿਖੋ"></label>
       </div>
       <div class="intake-section-title"><span>2</span><strong>ਸਮੱਸਿਆ ਬਾਰੇ <small>About the problem</small></strong></div>
       <div class="intake-grid">
@@ -36,6 +36,6 @@
   <section class="intake-card intake-done" id="done-card" role="status" hidden><div class="intake-success-icon" aria-hidden="true">✓</div><h2>ਅਰਜ਼ੀ ਮਿਲ ਗਈ</h2><p>Application received</p><div class="intake-reference"><small>ਆਪਣਾ ਰੈਫਰੈਂਸ ਨੰਬਰ ਸੰਭਾਲੋ · Keep your reference number</small><strong id="reference"></strong></div><p>ਦਫ਼ਤਰ ਦਾ ਸਟਾਫ਼ ਇਸ ਨੂੰ ਦੇਖੇਗਾ।<br><small>Office staff will review your application.</small></p></section>
 </main>
 <footer class="intake-footer">dsidein Office · ਜਨਤਕ ਅਰਜ਼ੀ ਫਾਰਮ</footer>
-<script type="module" src="../assets/online.js?v=2"></script>
+<script type="module" src="../assets/online.js?v=3"></script>
 </body>
 </html>
