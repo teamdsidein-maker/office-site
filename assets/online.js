@@ -10,6 +10,7 @@ const field = (name) => form.elements.namedItem(name);
 const headers = { apikey: supabaseAnonKey };
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fixedHalka = new URLSearchParams(location.search).get("halka") === "raja-sansi";
+let fixedHalkaAvailable = true;
 const imageInput = field("images");
 const photos = () => Array.from(imageInput.files || []);
 
@@ -57,13 +58,13 @@ try {
       document.querySelector("#done-office").innerHTML = "ਰਾਜਾ ਸਾਂਸੀ ਦਾ ਸਟਾਫ਼ ਇਸ ਨੂੰ ਦੇਖ ਕੇ ਸਬੰਧਤ ਅਧਿਕਾਰੀ ਨੂੰ ਸੌਂਪੇਗਾ।<br><small>Raja Sansi staff will review and assign your application.</small>";
     } else {
       errorBox.textContent = "Raja Sansi is not currently available. Please try again later.";
-      return;
+      fixedHalkaAvailable = false;
     }
   }
   field("category").innerHTML = '<option value="">ਸਮੱਸਿਆ ਦੀ ਕਿਸਮ ਚੁਣੋ · Select problem type</option>' +
     categories.map((c) => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name_pa || c.name)} · ${escapeHtml(c.name)}</option>`).join("");
   if (!constituencies.length || !categories.length) errorBox.textContent = "The form is temporarily unavailable. Please try again later.";
-  else button.disabled = false;
+  else if (fixedHalkaAvailable) button.disabled = false;
 } catch {
   errorBox.textContent = "Could not load form options. Please try again later.";
 }
