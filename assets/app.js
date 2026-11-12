@@ -2,6 +2,7 @@ import "./custom-select.js";
 import { api, isDemo, LIMITS } from "./data.js";
 import { ROLE_LABELS, assignableRoles, checkTarget, validMobile, validPassword } from "./rules.js";
 import { canMove, noteNeeded } from "./workflow.js";
+import { recordExportHtml } from "./record-export.js";
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -909,7 +910,7 @@ async function renderApplicationDetail(id) {
   $("#view").innerHTML = `
     <a class="back" href="${backHref}">← ${d && canSend() ? t(esc(d.name_pa || d.name), esc(d.name)) : t("ਅਰਜ਼ੀਆਂ", "Applications")}</a>
     <div class="page-head"><div><span class="app-no">${appNo(a)}</span><h1>${esc(a.name)}</h1>
-      <p class="muted small">${esc(fmtDate(a.created_at))}${a.intake_source === "online" ? ` · ${p("ਆਨਲਾਈਨ ਅਰਜ਼ੀ", "Online application")}` : ""}${creator ? ` · ${p("ਦਰਜ ਕੀਤੀ", "Registered by")}: ${esc(creator.full_name)}` : ""}</p></div>${statusBadge(a.status)}</div>
+      <p class="muted small">${esc(fmtDate(a.created_at))}${a.intake_source === "online" ? ` · ${p("ਆਨਲਾਈਨ ਅਰਜ਼ੀ", "Online application")}` : ""}${creator ? ` · ${p("ਦਰਜ ਕੀਤੀ", "Registered by")}: ${esc(creator.full_name)}` : ""}</p></div><div class="record-tools">${statusBadge(a.status)}<button class="btn" type="button" data-act="export-record" data-id="${esc(a.id)}">${t("ਵਾਟਰਮਾਰਕ PDF", "Print / Save PDF")}</button></div></div>
     <ol class="stepper${a.status === "returned" ? " back-state" : ""}">
       ${STEPS.map((s, i) => `<li class="${i < stepAt ? "done" : i === stepAt ? "now" : ""}"><i>${i < stepAt ? "✓" : i + 1}</i><span class="stack">${t(...STATUS[s])}</span></li>`).join("")}
     </ol>
@@ -1102,6 +1103,51 @@ function shareDialog(apps) {
 }
 
 // ---------- exports ----------
+async function exportRecord(a, button) {
+  if (!a) return;
+  const win = window.open("", "_blank");
+  if (!win) return toast(p("ਪੌਪ-ਅੱਪ ਬਲੌਕ ਹੈ, ਇਜਾਜ਼ਤ ਦਿਓ", "Pop-up blocked. Please allow pop-ups for this site."), "err");
+  win.document.title = `${appNo(a)} · Loading`;
+  win.document.body.textContent = p("ਰਿਕਾਰਡ ਤਿਆਰ ਹੋ ਰਿਹਾ ਹੈ", "Preparing record…");
+  button.disabled = true;
+  try {
+    const [events, images] = await Promise.all([api.listEvents(a.id), api.listImages(a.id)]);
+    const urls = await api.imageUrls(images.map((image) => image.path));
+    if (win.closed) return;
+    const html = recordExportHtml({
+      application: { ...a, created_at_display: fmtDate(a.created_at), updated_at_display: fmtDate(a.updated_at) },
+      number: appNo(a), status: p(...STATUS[a.status]),
+      constituency: plainName(conById(a.constituency_id)),
+      department: a.department_id ? plainName(deptById(a.department_id)) : "",
+      officers: appPeople(a.id).map((person) => person.full_name),
+      creator: state.people.find((person) => person.id === a.created_by)?.full_name || "",
+      details: plainText(a.details),
+      events: events.map((event) => ({
+        status: event.to_status && STATUS[event.to_status] ? p(...STATUS[event.to_status]) : "",
+        note: event.note, actor: event.actor_name, role: ROLE_LABELS[event.actor_role]?.[1] || "", at: fmtDate(event.at)
+      })),
+      images: images.map((image) => ({ url: urls[image.path] || "", at: image.at ? fmtDate(image.at) : "" })),
+      generatedAt: new Date().toLocaleString("en-IN")
+    });
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    win.document.getElementById("print-record")?.addEventListener("click", () => win.print());
+    await Promise.all([
+      win.document.fonts?.ready || Promise.resolve(),
+      ...Array.from(win.document.images, (image) => image.complete ? Promise.resolve() : new Promise((resolve) => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
+        setTimeout(resolve, 8000);
+      }))
+    ]);
+    if (!win.closed) win.print();
+  } catch (error) {
+    console.error(error);
+    if (!win.closed) win.document.body.textContent = p("ਰਿਕਾਰਡ ਨਹੀਂ ਬਣ ਸਕਿਆ", "Could not prepare this record. Please try again.");
+    toast(error.message || p("ਰਿਕਾਰਡ ਨਹੀਂ ਬਣ ਸਕਿਆ", "Could not prepare this record"), "err");
+  } finally { button.disabled = false; }
+}
 const APP_COLS = [
   ["no", "ਨੰਬਰ", "No.", (a) => appNo(a)],
   ["date", "ਤਾਰੀਖ", "Date", (a) => fmtDate(a.created_at)],
@@ -1552,6 +1598,7 @@ async function onClick(e) {
       case "pick-share": return shareDialog(pickedApps());
       case "share": return shareDialog([state.apps.find((a) => a.id === id)]);
       case "export-apps": return exportDialog();
+      case "export-record": return exportRecord(state.apps.find((a) => a.id === id), b);
       case "assign": return assignDialog(state.apps.find((a) => a.id === id));
       case "view-image": return b.dataset.src ? showImage(b.dataset.src) : undefined;
       case "move": {
